@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Table(name = "plan_item", schema = "fpis")
 public class PlanItem {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

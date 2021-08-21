@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AnnualPlanService {
@@ -27,36 +28,43 @@ public class AnnualPlanService {
     @Transactional
     public AnnualPlan save(AnnualPlan newPlan) {
 
-        newPlan.setId(repository.count() + 1);
+        Set<PlanItem> planItems = newPlan.getPlanItems();
 
-        Long planItemId = planItemService.count();
-        AnnualPlan help = new AnnualPlan();
-        help.setId(newPlan.getId());
+        newPlan.setPlanItems(null);
+        AnnualPlan savedPlan = repository.save(newPlan);
 
-        for (PlanItem plan : newPlan.getPlanItems()) {
-            plan.setId(planItemId + 1);
-            planItemId++;
-            plan.setAnnualPlan(help);
+        for (PlanItem plan : planItems) {
+            planItemService.save(plan, savedPlan.getId());
         }
 
-        return repository.save(newPlan);
+        return savedPlan;
     }
 
     public Optional<AnnualPlan> findById(Long planId) {
         return repository.findById(planId);
     }
 
+    @Transactional
     public AnnualPlan update(Long planId, AnnualPlan plan) {
-//        Product productToUpdate = repository.getOne(productId);
-//        productToUpdate.setName(product.getName());
-//        productToUpdate.setProfessionalName(product.getProfessionalName());
-//        productToUpdate.setShape(product.getShape());
-//        productToUpdate.setDescription(product.getDescription());
-//        productToUpdate.setInstruction(product.getInstruction());
-//        productToUpdate.setPrice(product.getPrice());
-//        productToUpdate.setUnitOfMeasure(product.getUnitOfMeasure());
-//        return repository.save(productToUpdate);
-        return null;
+
+        AnnualPlan annualPlanToUpdate = repository.getOne(planId);
+
+        annualPlanToUpdate.setId(planId);
+        annualPlanToUpdate.setDateOfIssue(plan.getDateOfIssue());
+        annualPlanToUpdate.setExpirationDate(plan.getExpirationDate());
+        annualPlanToUpdate.setDescription(plan.getDescription());
+        annualPlanToUpdate.setNote(plan.getNote());
+        annualPlanToUpdate.setWorker(plan.getWorker());
+        annualPlanToUpdate.setPlanItems(null);
+
+        for (PlanItem planItem : plan.getPlanItems()) {
+            if (planItem.getId() == null) {
+                planItemService.save(planItem, plan.getId());
+            } else {
+                planItemService.update(planItem.getId(), planItem);
+            }
+        }
+        return repository.save(annualPlanToUpdate);
     }
 
     public void delete(Long id) throws Exception {

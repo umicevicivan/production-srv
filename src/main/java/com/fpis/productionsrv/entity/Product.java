@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Table(name = "Product", schema = "fpis")
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String professionalName;

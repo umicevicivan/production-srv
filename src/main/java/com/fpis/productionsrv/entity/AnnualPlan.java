@@ -18,6 +18,7 @@ import java.util.Set;
 @Table(name = "annual_plan", schema = "fpis")
 public class AnnualPlan {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Timestamp dateOfIssue;
     private Timestamp expirationDate;

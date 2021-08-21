@@ -23,8 +23,7 @@ public class ProductService {
         return repository.findById(productId);
     }
 
-    public Product save(Product newProduct){
-        newProduct.setId(repository.count() + 1);
+    public Product save(Product newProduct) {
         return repository.save(newProduct);
     }
 
