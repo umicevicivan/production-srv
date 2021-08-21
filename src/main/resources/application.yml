@@ -1,0 +1,9 @@
+#string:
+#  h2:
+#    console:
+#      enabled: true
+
+server:
+  port: 9192
+  servlet.context-path: /production-srv
+  error.whitelabel.enabled: false
